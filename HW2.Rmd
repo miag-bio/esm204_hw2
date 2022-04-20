@@ -1,0 +1,17 @@
+---
+title: "ESM204_HW2"
+author: "Mia Guarnieri"
+date: "4/20/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(here)
+
+wd <- read_csv(here("data", "Water_Districts.csv"))
+kern <- wd %>% 
+  select(1, Reduction, MC_Kern)
+```
