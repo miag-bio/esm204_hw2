@@ -73,6 +73,43 @@ antelope_coeff <- antelope_model$coefficient[1]
 
 ventura_model <- lm(data = ventura, MC_Ventura ~ 0 + Reduction)
 ventura_coeff <- ventura_model$coefficient[1]
+
+#lm graphs
+klm <- ggplot(kern, aes(x = Reduction, y = MC_Kern)) +
+  geom_point(color = "lightgrey") +
+  geom_smooth(method='lm', se=FALSE, color = "turquoise4") + 
+  theme_minimal() + 
+  labs(x = "Acre Feet Reduction",
+       y = "$/Acre Foot",
+       title = "Kern")
+
+mlm <- ggplot(mojave, aes(x = Reduction, y = MC_Mojave)) +
+  geom_point(color = "lightgrey") +
+  geom_smooth(method='lm', se=FALSE, color = "turquoise4") + 
+  theme_minimal() + 
+  labs(x = "Acre Feet Reduction",
+       y = "$/Acre Foot",
+       title = "Mojave")
+
+alm <- ggplot(antelope, aes(x = Reduction, y = MC_Antelope)) +
+  geom_point(color = "lightgrey") +
+  geom_smooth(method='lm', se=FALSE, color = "turquoise4") + 
+  theme_minimal() + 
+  labs(x = "Acre Feet Reduction",
+       y = "$/Acre Foot",
+       title = "Antelope")
+
+vlm <- ggplot(ventura, aes(x = Reduction, y = MC_Ventura)) +
+  geom_point(color = "lightgrey") +
+  geom_smooth(method='lm', se=FALSE, color = "turquoise4") + 
+  theme_minimal() + 
+  labs(x = "Acre Feet Reduction",
+       y = "$/Acre Foot",
+       title = "Ventura")
+
+#combine
+(klm + mlm)/(alm + vlm)
+
 ```
 
 
