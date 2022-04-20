@@ -5,13 +5,77 @@ date: "4/20/2022"
 output: html_document
 ---
 
+1. For each irrigation district, plot the marginal abatement cost data (from the data provided) and estimate a linear regression model with zero intercept. These estimated linear regressions will be your estimates of the marginal abatement cost curve (one for each irrigation district), which you will use for the remainder of this analysis. 
+
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
 library(tidyverse)
 library(here)
+library(patchwork)
 
 wd <- read_csv(here("data", "Water_Districts.csv"))
+
 kern <- wd %>% 
   select(1, Reduction, MC_Kern)
+
+mojave <- wd %>% 
+  select(1, Reduction, MC_Mojave)
+
+antelope <- wd %>% 
+  select(1, Reduction, MC_Antelope)
+
+ventura <- wd %>% 
+  select(1, Reduction, MC_Ventura)
+
+#Kern graph
+kp <- ggplot(kern, aes(x = Reduction, y = MC_Kern)) +
+  geom_line() +
+  labs(x = "Acre Feet Reduction",
+       y = "$/Acre Foot",
+       title = "Kern")
+
+#Mojave graph
+mp <- ggplot(mojave, aes(x = Reduction, y = MC_Mojave)) +
+  geom_line()+
+  labs(x = "Acre Feet Reduction",
+       y = "$/Acre Foot",
+       title = "Mojave")
+
+#Antelope graph
+ap <- ggplot(antelope, aes(x = Reduction, y = MC_Antelope)) +
+  geom_line()+
+  labs(x = "Acre Feet Reduction",
+       y = "$/Acre Foot",
+       title = "Antelope")
+
+#Ventura graph
+vp <- ggplot(ventura, aes(x = Reduction, y = MC_Ventura)) +
+  geom_line()+
+  labs(x = "Acre Feet Reduction",
+       y = "$/Acre Foot",
+       title = "Ventura")
+
+#combine
+(kp + mp)/(ap + vp)
+
+
+#linear models
+kern_model <- lm(data = kern, MC_Kern ~ 0 + Reduction)
+kern_coeff <- kern_model$coefficient[1]
+
+mojave_model <- lm(data = mojave, MC_Mojave ~ 0 + Reduction)
+mojave_coeff <- mojave_model$coefficient[1]
+
+antelope_model <- lm(data = antelope, MC_Antelope ~ 0 + Reduction)
+antelope_coeff <- antelope_model$coefficient[1]
+
+ventura_model <- lm(data = ventura, MC_Ventura ~ 0 + Reduction)
+ventura_coeff <- ventura_model$coefficient[1]
 ```
+
+
+
+
+
