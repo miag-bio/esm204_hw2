@@ -158,6 +158,7 @@ ggplot() +
 a. Cap without trade. Reduce each district’s water use by the same fraction (e.g., 1/3 of current baseline use), so the 500 AF target is met. Trade is not allowed. Stringency is defined as the magnitude of the fraction. 
 ⅓ Current (i.e. baseline) water use in these districts 1 is: Kern = 49.5 AF, Mojave = 46.2 AF, Antelope = 72.6 AF, and Ventura = 80.85 AF.
 
+
 b. Tax on water use. A single tax is implemented on all water use in each of the four districts, such that water use is reduced to the 500 AF target. Stringency is defined as the magnitude of the tax. 
 
 Marginal cost of commuting is the inverse of the marginal cost of abatement. 
