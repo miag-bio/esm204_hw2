@@ -114,47 +114,57 @@ vlm <- ggplot(ventura, aes(x = Reduction, y = MC_Ventura)) +
 2. Using your estimated marginal abatement cost curves, derive each district’s demand curve for water. In other words, how much would each district be willing to pay for the right to use the first AF of water, second AF, etc.? Plot each district’s demand curve on a single graph. Which sector is willing to pay the most for the first AF of water? 
 
 ```{r}
-#creating a dataframe to use for calculations
-k_pred <- kern_coeff * seq(0, 150, length.out = 141)
-m_pred <- mojave_coeff * seq(0, 150, length.out = 141)
-a_pred <- antelope_coeff * seq(0, 150, length.out = 141)
-v_pred <- ventura_coeff * seq(0, 150, length.out = 141)
+#predicted marginal cost based on linear model
+k_pred <- kern_coeff * seq(0, 140, length.out = 141)
+m_pred <- mojave_coeff * seq(0, 140, length.out = 141)
+a_pred <- antelope_coeff * seq(0, 140, length.out = 141)
+v_pred <- ventura_coeff * seq(0, 140, length.out = 141)
 
-kd <- kern %>% 
+#making data frames for plotting
+kdem <- kern %>% 
   mutate(kpmc = k_pred,
-         kd = 160 - Reduction) %>% 
-  select(MC_Kern, kpmc, kd)
+         kd = 150 - Reduction)
 
-md <- mojave %>% 
+mdem <- mojave %>% 
   mutate(mpmc = m_pred,
-         md = 160 - Reduction) %>% 
-  select(MC_Mojave, mpmc, md)
+         md = 140 - Reduction)
 
-ad <- antelope %>% 
+adem <- antelope %>% 
   mutate(apmc = a_pred,
-         ad = 160 - Reduction)
+         ad = 220 - Reduction)
 
-vd <- ventura %>% 
-  mutate(predicted_mc = v_pred,
-         demand = 160 - Reduction)
-
-plot_data <- wd %>% 
-  mutate(kd = kd$demand,
-         kpmc = kd$predicted_mc,
-         md = md$demand,
-         mpmc = md$predicted_mc,
-         ad = ad$demand,
-         apmc = ad$predicted_mc,
-         vd = vd$demand,
-         vpmc = vd$predicted_mc)
-
+vdem <- ventura %>% 
+  mutate(vpmc = v_pred,
+         vd = 245 - Reduction)
+#plot
 ggplot() +
-  geom_line(kd, aes(x = demand, y = predicted_mc), color = "blue") +
-  geom_line(md, aes(x = demand, y = predicted_mc), color = "green") +
-  geom_line(ad, aes(x = demand, y = predicted_mc), color = "purple") +
-  geom_line(vd, aes(x = demand, y = predicted_mc), color = "magenta")
+  geom_line(kdem, mapping = aes(x = kd, y = kpmc, color = "a")) +
+  geom_line(mdem, mapping = aes(x = md, y = mpmc, color = "b")) +
+  geom_line(adem, mapping = aes(x = ad, y = apmc, color = "c")) +
+  geom_line(vdem, mapping = aes(x = vd, y = vpmc, color = "d")) +
+  scale_color_manual(values = c("blue", "darkgreen", "purple", "magenta"),
+                     labels = expression("Kern", "Mojave", "Antelope", "Ventura")) + 
+  labs(x = "Demand (Acre Feet)",
+       y = "Price",
+       color = "District")
 ```
 
+3. Here you will analyze three alternative policies for reducing water use among these irrigation districts. In total, these irrigation districts will need to reduce water consumption from the current 755 AF down to 500 AF. For each intervention listed below, perform the following calculations: 
+(1) calculate the stringency of the policy (defined below for each intervention) required to achieve the 500 AF target
+(2) calculate the total cost of meeting the target using that approach
+(3) calculate the cost to each district
+(4) calculate the tax revenue generated. 
+
+a. Cap without trade. Reduce each district’s water use by the same fraction (e.g., 1/3 of current baseline use), so the 500 AF target is met. Trade is not allowed. Stringency is defined as the magnitude of the fraction. 
+⅓ Current (i.e. baseline) water use in these districts 1 is: Kern = 49.5 AF, Mojave = 46.2 AF, Antelope = 72.6 AF, and Ventura = 80.85 AF.
+
+b. Tax on water use. A single tax is implemented on all water use in each of the four districts, such that water use is reduced to the 500 AF target. Stringency is defined as the magnitude of the tax. 
+
+Marginal cost of commuting is the inverse of the marginal cost of abatement. 
+Inverse of the cash for clunkers problem
+
+
+c. Cap and trade. Cap water use as in part (a), but after those caps are set, allow trade across districts. How much water is used by each district after trade? Stringency is the same as in part (a). 
 
 
 
