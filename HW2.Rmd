@@ -18,16 +18,16 @@ library(patchwork)
 wd <- read_csv(here("data", "Water_Districts.csv"))
 
 kern <- wd %>% 
-  select(1, Reduction, MC_Kern)
+  select(Reduction, MC_Kern)
 
 mojave <- wd %>% 
-  select(1, Reduction, MC_Mojave)
+  select(Reduction, MC_Mojave)
 
 antelope <- wd %>% 
-  select(1, Reduction, MC_Antelope)
+  select(Reduction, MC_Antelope)
 
 ventura <- wd %>% 
-  select(1, Reduction, MC_Ventura)
+  select(Reduction, MC_Ventura)
 
 #Kern graph
 kp <- ggplot(kern, aes(x = Reduction, y = MC_Kern)) +
@@ -109,9 +109,51 @@ vlm <- ggplot(ventura, aes(x = Reduction, y = MC_Ventura)) +
 
 #combine
 (klm + mlm)/(alm + vlm)
-
 ```
 
+2. Using your estimated marginal abatement cost curves, derive each district’s demand curve for water. In other words, how much would each district be willing to pay for the right to use the first AF of water, second AF, etc.? Plot each district’s demand curve on a single graph. Which sector is willing to pay the most for the first AF of water? 
+
+```{r}
+#creating a dataframe to use for calculations
+k_pred <- kern_coeff * seq(0, 150, length.out = 141)
+m_pred <- mojave_coeff * seq(0, 150, length.out = 141)
+a_pred <- antelope_coeff * seq(0, 150, length.out = 141)
+v_pred <- ventura_coeff * seq(0, 150, length.out = 141)
+
+kd <- kern %>% 
+  mutate(kpmc = k_pred,
+         kd = 160 - Reduction) %>% 
+  select(MC_Kern, kpmc, kd)
+
+md <- mojave %>% 
+  mutate(mpmc = m_pred,
+         md = 160 - Reduction) %>% 
+  select(MC_Mojave, mpmc, md)
+
+ad <- antelope %>% 
+  mutate(apmc = a_pred,
+         ad = 160 - Reduction)
+
+vd <- ventura %>% 
+  mutate(predicted_mc = v_pred,
+         demand = 160 - Reduction)
+
+plot_data <- wd %>% 
+  mutate(kd = kd$demand,
+         kpmc = kd$predicted_mc,
+         md = md$demand,
+         mpmc = md$predicted_mc,
+         ad = ad$demand,
+         apmc = ad$predicted_mc,
+         vd = vd$demand,
+         vpmc = vd$predicted_mc)
+
+ggplot() +
+  geom_line(kd, aes(x = demand, y = predicted_mc), color = "blue") +
+  geom_line(md, aes(x = demand, y = predicted_mc), color = "green") +
+  geom_line(ad, aes(x = demand, y = predicted_mc), color = "purple") +
+  geom_line(vd, aes(x = demand, y = predicted_mc), color = "magenta")
+```
 
 
 
