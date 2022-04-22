@@ -115,27 +115,30 @@ vlm <- ggplot(ventura, aes(x = Reduction, y = MC_Ventura)) +
 
 ```{r}
 #predicted marginal cost based on linear model
-k_pred <- kern_coeff * seq(0, 140, length.out = 141)
-m_pred <- mojave_coeff * seq(0, 140, length.out = 141)
-a_pred <- antelope_coeff * seq(0, 140, length.out = 141)
-v_pred <- ventura_coeff * seq(0, 140, length.out = 141)
-
-#making data frames for plotting
-kdem <- kern %>% 
+k_base <- tibble(Reduction = 0:150)
+k_pred <- predict(kern_model, newdata = k_base)
+kdem <- k_base %>% 
   mutate(kpmc = k_pred,
          kd = 150 - Reduction)
 
-mdem <- mojave %>% 
+m_base <- tibble(Reduction = 0:140)
+m_pred <- predict(mojave_model, newdata = m_base)
+mdem <- m_base %>% 
   mutate(mpmc = m_pred,
          md = 140 - Reduction)
 
-adem <- antelope %>% 
+a_base <- tibble(Reduction = 0:220)
+a_pred <- predict(antelope_model, newdata = a_base)
+adem <- a_base %>% 
   mutate(apmc = a_pred,
          ad = 220 - Reduction)
 
-vdem <- ventura %>% 
+v_base <- tibble(Reduction = 0:245)
+v_pred <- predict(ventura_model, newdata = v_base)
+vdem <- v_base %>% 
   mutate(vpmc = v_pred,
          vd = 245 - Reduction)
+
 #plot
 ggplot() +
   geom_line(kdem, mapping = aes(x = kd, y = kpmc, color = "a")) +
@@ -146,7 +149,8 @@ ggplot() +
                      labels = expression("Kern", "Mojave", "Antelope", "Ventura")) + 
   labs(x = "Demand (Acre Feet)",
        y = "Price",
-       color = "District")
+       color = "District") +
+  theme_minimal()
 ```
 
 3. Here you will analyze three alternative policies for reducing water use among these irrigation districts. In total, these irrigation districts will need to reduce water consumption from the current 755 AF down to 500 AF. For each intervention listed below, perform the following calculations: 
