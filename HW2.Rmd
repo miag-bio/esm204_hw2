@@ -162,14 +162,65 @@ ggplot() +
 a. Cap without trade. Reduce each district’s water use by the same fraction (e.g., 1/3 of current baseline use), so the 500 AF target is met. Trade is not allowed. Stringency is defined as the magnitude of the fraction. 
 ⅓ Current (i.e. baseline) water use in these districts 1 is: Kern = 49.5 AF, Mojave = 46.2 AF, Antelope = 72.6 AF, and Ventura = 80.85 AF.
 
+```{r}
+kern_price <- kern_coeff * 50.655
+mojave_price <- mojave_coeff * 47.278
+antelope_price <- antelope_coeff * 74.394
+ventura_price <- ventura_coeff * 82.737
+```
+
 
 b. Tax on water use. A single tax is implemented on all water use in each of the four districts, such that water use is reduced to the 500 AF target. Stringency is defined as the magnitude of the tax. 
 
-Marginal cost of commuting is the inverse of the marginal cost of abatement. 
-Inverse of the cash for clunkers problem
+```{r}
+km_join <- full_join(kdem, mdem, by = "Reduction")
+
+kma_join <- full_join(km_join, adem, by = "Reduction")
+
+demand_sum <- full_join(kma_join, vdem, by = "Reduction")
+
+demand_sum[is.na(demand_sum)] <- 0
+
+demand_sum <- demand_sum %>% 
+  mutate(aggregate_demand = kd + md + ad + vd,
+         aggregate_mc = kpmc + mpmc + apmc + vpmc) %>% 
+  select(Reduction, aggregate_demand, aggregate_mc)
+
+#plot
+ggplot() +
+  geom_line(kdem, mapping = aes(x = kd, y = kpmc, color = "a")) +
+  geom_line(mdem, mapping = aes(x = md, y = mpmc, color = "b")) +
+  geom_line(adem, mapping = aes(x = ad, y = apmc, color = "c")) +
+  geom_line(vdem, mapping = aes(x = vd, y = vpmc, color = "d")) +
+  geom_line(demand_sum, mapping = aes(x = aggregate_demand, y = aggregate_mc, color = "e")) +
+  scale_color_manual(values = c("blue", "darkgreen", "purple", "magenta", "darkorange1"),
+                     labels = expression("Kern", "Mojave", "Antelope", "Ventura", "Aggregate")) + 
+  labs(x = "Demand (Acre Feet)",
+       y = "Price",
+       color = "District") +
+  theme_minimal()
 
 
-c. Cap and trade. Cap water use as in part (a), but after those caps are set, allow trade across districts. How much water is used by each district after trade? Stringency is the same as in part (a). 
+#second attempt
+agg_coeff <- (1/kern_coeff) + (1/mojave_coeff) + (1/antelope_coeff) + (1/ventura_coeff)
 
+agg_red_price <- (755-500) * agg_coeff
+
+#prices
+kern_price3b <- kern_coeff * 80.72
+mojave_price3b <- mojave_coeff * 98.363
+antelope_price3b <- antelope_coeff * 164.573
+ventura_price3b <- ventura_coeff * 89.181
+```
+
+
+4. a)
+
+```{r}
+kern_price4a <- kern_coeff * 59.61
+mojave_price4a <- mojave_coeff * 55.636
+antelope_price4a <- antelope_coeff * 87.428
+ventura_price4a <- ventura_coeff * 97.363
+```
 
 
